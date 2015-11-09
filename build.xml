@@ -1,0 +1,31 @@
+<project name="SomeUtils" default="init" basedir=".">
+	<!-- 為build文件設定全域性屬性 可看成變數宣告-->
+	<!--<property name="src" location="YSH\OA\P13_PRESS_RELEASE" />
+	<property name="test1" location="Y:\babylon\ysphr\YSH\OA\P13_PRESS_RELEASE" />-->
+	<target name="init">
+		<!--建立來源和目的資料路徑即可 fileset表示多數檔案  -->
+		<copy encoding="UTF-8" includeemptydirs="false" todir="Z:\babylon\yskoa_uat\SomeUtils">
+			<fileset dir="SomeUtils">
+				<!--<exclude name="**/*.class"/>-->
+			</fileset>
+		</copy>
+		<copy encoding="UTF-8" includeemptydirs="false" todir="Z:\babylon\yskoa_uat\SomeUtils\Bean">
+			<fileset dir="SomeUtils\Bean">
+				<!--<exclude name="**/*.class"/>-->
+			</fileset>
+		</copy>
+		<copy encoding="UTF-8" includeemptydirs="false" todir="D:\root_dmaker\SomeUtils">
+			<fileset dir="SomeUtils">
+				<!--<exclude name="**/*.class"/>-->
+			</fileset>
+		</copy>
+		<copy encoding="UTF-8" includeemptydirs="false" todir="D:\root_dmaker\SomeUtils\Bean">
+			<fileset dir="SomeUtils\Bean">
+				<!--<exclude name="**/*.class"/>-->
+			</fileset>
+		</copy>
+	</target>
+</project>
+
+
+
