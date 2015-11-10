@@ -2,8 +2,6 @@ package SomeUtils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Vector;
 
 import jcx.db.talk;
@@ -105,56 +103,102 @@ public class _hproc extends hproc {
 		return true;
 	}
 
-	public UserInfoViewBean getUserInfo(String EMPID) throws SQLException, Exception {
-		
+	public UserInfoViewBean getUserInfo(String EMPID) throws SQLException,
+			Exception {
+
 		talk t = getTalk();
-		String sql = "SELECT * FROM YSKHR.dbo.USER_INFO_VIEW WHERE EMPID = '"+EMPID+"'";
+		String sql = "SELECT * FROM YSKHR.dbo.USER_INFO_VIEW WHERE EMPID = '"
+				+ EMPID + "'";
 
 		String[][] ret = t.queryFromPool(sql);
-		UserInfoViewBean UIV = new UserInfoViewBean();
-		UIV.setCpnyid(ret[0][0]);
-		UIV.setEmpid(ret[0][1]);
-		UIV.setDeptNo(ret[0][2]);
-		UIV.setHecname(ret[0][3]);
-		UIV.setExt(ret[0][4]);
-		UIV.setEmail(ret[0][5]);
-		UIV.setDepNo(Integer.parseInt(ret[0][6]));
-		UIV.setDepName(ret[0][7]);
-		UIV.setDepChief(ret[0][8]);
-		UIV.setParentNo(Integer.parseInt(ret[0][9]));
-		UIV.setDepType(ret[0][10]);
-		UIV.setPossie(ret[0][11]);
-		UIV.setPosName(ret[0][12]);
-		UIV.setBossName(ret[0][13]);
-		UIV.setAgent(ret[0][14]);
-		UIV.setAgentName(ret[0][15]);
-		UIV.setInadate(ret[0][16]);
-		UIV.setState(ret[0][17]);
-		UIV.setQuitdate(ret[0][18]);
-		UIV.setEmpidName(ret[0][19]);		
-		return UIV;
+		if (ret.length > 0) {
+			UserInfoViewBean UIV = new UserInfoViewBean();
+			UIV.setCpnyid(ret[0][0]);
+			UIV.setEmpid(ret[0][1]);
+			UIV.setDeptNo(ret[0][2]);
+			UIV.setHecname(ret[0][3]);
+			UIV.setExt(ret[0][4]);
+			UIV.setEmail(ret[0][5]);
+			UIV.setDepNo(Integer.parseInt(ret[0][6]));
+			UIV.setDepName(ret[0][7]);
+			UIV.setDepChief(ret[0][8]);
+			UIV.setParentNo(Integer.parseInt(ret[0][9]));
+			UIV.setDepType(ret[0][10]);
+			UIV.setPossie(ret[0][11]);
+			UIV.setPosName(ret[0][12]);
+			UIV.setBossName(ret[0][13]);
+			UIV.setAgent(ret[0][14]);
+			UIV.setAgentName(ret[0][15]);
+			UIV.setInadate(ret[0][16]);
+			UIV.setState(ret[0][17]);
+			UIV.setQuitdate(ret[0][18]);
+			UIV.setEmpidName(ret[0][19]);
+			return UIV;
+		}
 
+		return null;
 	}
-	
+
 	public String setQueryTable(ArrayList<QueryItem> list, String tableName,
-			String signFunctionName, int empNameNo, int signStateNo)
-			throws SQLException, Exception {
+			String signFunctionName, int empNameNo, int signStateNo,
+			String otherCondition) throws SQLException, Exception {
 
 		String selectField = "";
 		String tableHeaders = "";
 		String c = ",";
-
+		String conditionSqlString = "";
+		String AND = " and ";
+		ArrayList<String> condition = new ArrayList<String>();
 		for (QueryItem q : list) {
 			if (list.indexOf(q) == list.size() - 1) {
 				c = "";
 			}
 			selectField += q.getFieldName() + c;
 			tableHeaders += q.getChineseName() + c;
+			// process search type
+
+			switch (q.getSearchType()) {
+			case 1:
+				if (!StringUtils.isEmpty(getValue("QUERY_" + q.getFieldName()))) {
+					condition.add(q.getFieldName() + "= '"
+							+ getValue("QUERY_" + q.getFieldName()) + "'");
+				}
+
+				break;
+			case 2:
+				if (!StringUtils.isEmpty(getValue("QUERY_" + q.getFieldName()
+						+ "_S"))) {
+					condition.add(q.getFieldName() + " between '"
+							+ getValue("QUERY_" + q.getFieldName() + "_S")
+							+ "' and '"
+							+ getValue("QUERY_" + q.getFieldName() + "_E")
+							+ "'");
+				}
+
+				break;
+			case 0:
+
+				break;
+
+			default:
+				break;
+			}
+
+		}
+
+		if (condition.size() > 0) {
+			conditionSqlString = AND;
+			for (String s : condition) {
+				if (condition.indexOf(s) == condition.size() - 1) {
+					AND = "";
+				}
+				conditionSqlString += s + AND;
+			}
 		}
 		String[] HeaderArray = tableHeaders.split(",");
 
 		String sqlString = "SELECT " + selectField + " FROM " + tableName
-				+ " a";
+				+ " a " + otherCondition + conditionSqlString;
 		String[][] ret = getTalk().queryFromPool(sqlString);
 
 		for (int i = 0; i < ret.length; i++) {
@@ -196,31 +240,30 @@ public class _hproc extends hproc {
 		}
 
 		getTalk().close();
-		if (ret.length > 0) {
-			setTableData("QUERY_LIST", ret);
-			setTableHeader("QUERY_LIST", HeaderArray);
-		} else {
+		if (ret.length <= 0) {
 			message("查無資料!");
+
 		}
+		setTableData("QUERY_LIST", ret);
+		setTableHeader("QUERY_LIST", HeaderArray);
 
 		return "---------------DO_QUERY(\u9001\u51fa\u67e5\u8a62).html_action()----------------";
 	}
-	
-//	public HashMap<String,String> getQueryTable() {
-//		
-//		String aString = "";
-//		HashMap<String,String> map = new HashMap<String,String>();
-//		Enumeration<String> iterator = getAllcLabels().keys();
-//		
-//		while (iterator.hasMoreElements()) {
-//			map.put(iterator.nextElement(), getValue(iterator.nextElement()));
-//			aString  += iterator.nextElement()+"-";
-//			
-//		}
-//		return map;
-//		
-//	}
-	
+
+	// public HashMap<String,String> getQueryTable() {
+	//
+	// String aString = "";
+	// HashMap<String,String> map = new HashMap<String,String>();
+	// Enumeration<String> iterator = getAllcLabels().keys();
+	//
+	// while (iterator.hasMoreElements()) {
+	// map.put(iterator.nextElement(), getValue(iterator.nextElement()));
+	// aString += iterator.nextElement()+"-";
+	//
+	// }
+	// return map;
+	//
+	// }
 
 	@Override
 	public String action(String paramString) throws Throwable {
