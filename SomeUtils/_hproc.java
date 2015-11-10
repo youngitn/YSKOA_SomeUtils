@@ -15,6 +15,15 @@ import SomeUtils.Bean.UserInfoViewBean;
 
 public class _hproc extends hproc {
 
+	/**
+	 * 送參數代替select動作.
+	 * @param tableName 資料表名稱
+	 * @param PKFieldName PK欄位名稱
+	 * @param Key PK的值
+	 * @return String[][] 回傳查詢結果
+	 * @throws SQLException
+	 * @throws Exception
+	 */
 	public String[][] getInfoTheKeyIs(String tableName, String PKFieldName,
 			String Key) throws SQLException, Exception {
 
@@ -28,6 +37,12 @@ public class _hproc extends hproc {
 
 	}
 
+	/**
+	 * 新增資料進資料庫,代入資料表名稱會自動取得該表的所有欄位
+	 * PNO部分,內部會使用createPNO來取得
+	 * @param tableName 資料表名稱
+	 * @throws Exception
+	 */
 	public void DoInster(String tableName) throws Exception {
 		talk t = getTalk();
 		String sql = "select * from " + tableName;
@@ -56,6 +71,15 @@ public class _hproc extends hproc {
 		message("資料已送出!");
 	}
 
+	/**
+	 * 利用年月日 產生PK.
+	 * @param Key PK欄位的名稱
+	 * @param inToday 產生PK的日期
+	 * @param inTableName 資料表名稱
+	 * @return String 回傳獨一無二的字串編碼
+	 * @throws SQLException
+	 * @throws Exception
+	 */
 	public String createPNO(String Key, String inToday, String inTableName)
 			throws SQLException, Exception {
 		int idx = 1;
@@ -79,6 +103,15 @@ public class _hproc extends hproc {
 		return pno;
 	}
 
+	/**
+	 * 帶入參數做查詢.有where的查詢才適用
+	 * @param field 要查詢的欄位,為一字串 如要找 A和B欄位直接給"A,B".
+	 * @param table 資料表名稱
+	 * @param condition where查詢條件
+	 * @return String[][] 回傳查詢結果
+	 * @throws SQLException
+	 * @throws Exception
+	 */
 	public String[][] selectFromWhere(String field, String table,
 			String condition) throws SQLException, Exception {
 		talk t = getTalk();
@@ -91,6 +124,11 @@ public class _hproc extends hproc {
 
 	}
 
+	/**
+	 * 將想要做判斷不可為空的欄位塞入陣列,如果為空 則中斷新增.
+	 * @param field String[][] 二微陣列
+	 * @return
+	 */
 	public boolean checkEmpty(String[][] field) {
 
 		for (int i = 0; i < field.length; i++) {
@@ -103,6 +141,13 @@ public class _hproc extends hproc {
 		return true;
 	}
 
+	/**
+	 * 從UserInfoView取得員工資料
+	 * @param EMPID
+	 * @return
+	 * @throws SQLException
+	 * @throws Exception
+	 */
 	public UserInfoViewBean getUserInfo(String EMPID) throws SQLException,
 			Exception {
 
@@ -250,20 +295,6 @@ public class _hproc extends hproc {
 		return "---------------DO_QUERY(\u9001\u51fa\u67e5\u8a62).html_action()----------------";
 	}
 
-	// public HashMap<String,String> getQueryTable() {
-	//
-	// String aString = "";
-	// HashMap<String,String> map = new HashMap<String,String>();
-	// Enumeration<String> iterator = getAllcLabels().keys();
-	//
-	// while (iterator.hasMoreElements()) {
-	// map.put(iterator.nextElement(), getValue(iterator.nextElement()));
-	// aString += iterator.nextElement()+"-";
-	//
-	// }
-	// return map;
-	//
-	// }
 
 	@Override
 	public String action(String paramString) throws Throwable {
