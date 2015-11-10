@@ -1,8 +1,10 @@
 package SomeUtils;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Vector;
 
 import jcx.db.talk;
 import jcx.jform.hproc;
@@ -10,6 +12,7 @@ import jcx.jform.hproc;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import SomeUtils.Bean.QueryItem;
 import SomeUtils.Bean.UserInfoViewBean;
 
 public class _hproc extends hproc {
@@ -133,6 +136,75 @@ public class _hproc extends hproc {
 
 	}
 	
+	public String setQueryTable(ArrayList<QueryItem> list, String tableName,
+			String signFunctionName, int empNameNo, int signStateNo)
+			throws SQLException, Exception {
+
+		String selectField = "";
+		String tableHeaders = "";
+		String c = ",";
+
+		for (QueryItem q : list) {
+			if (list.indexOf(q) == list.size() - 1) {
+				c = "";
+			}
+			selectField += q.getFieldName() + c;
+			tableHeaders += q.getChineseName() + c;
+		}
+		String[] HeaderArray = tableHeaders.split(",");
+
+		String sqlString = "SELECT " + selectField + " FROM " + tableName
+				+ " a";
+		String[][] ret = getTalk().queryFromPool(sqlString);
+
+		for (int i = 0; i < ret.length; i++) {
+			// set EMP name in table data.
+			UserInfoViewBean user = getUserInfo(ret[i][empNameNo]);
+			ret[i][empNameNo] = ret[i][empNameNo] + "-" + user.getHecname();
+
+			// set SIGN state and who will sign in table data.==>
+			// the if-statement like below...may be more.
+			if (ret[i][signStateNo].trim().equals("歸檔")
+					|| ret[i][signStateNo].trim().equals("結案")
+					|| ret[i][signStateNo].trim().equals("END")) {
+
+				ret[i][signStateNo] = ret[i][signStateNo].trim()
+						+ "<font color=blue>(已結案)</font>";
+			} else {
+				// 如果還沒結案 就需要取得簽核人員的資料並顯示.
+				Vector<?> people = getApprovablePeople(signFunctionName,
+						"a.PNO='" + ret[i][0] + "'");
+
+				StringBuffer sb = new StringBuffer();
+				if (people != null) {
+					if (people.size() != 0) {
+						sb.append("(");
+						for (int j = 0; j < people.size(); j++) {
+							if (j != 0)
+								sb.append(",");
+							String id1 = (String) people.elementAt(j);
+							String name1 = getName(id1);
+							sb.append(name1 + ":" + id1);
+						}
+						sb.append(")");
+					}
+				}
+				ret[i][signStateNo] = ret[i][signStateNo].trim()
+						+ "<font color=red>(未結案)" + sb.toString() + "</font>";
+			}
+			// set SIGN state and who will sign in table data.==<
+		}
+
+		getTalk().close();
+		if (ret.length > 0) {
+			setTableData("QUERY_LIST", ret);
+			setTableHeader("QUERY_LIST", HeaderArray);
+		} else {
+			message("查無資料!");
+		}
+
+		return "---------------DO_QUERY(\u9001\u51fa\u67e5\u8a62).html_action()----------------";
+	}
 	
 //	public HashMap<String,String> getQueryTable() {
 //		
