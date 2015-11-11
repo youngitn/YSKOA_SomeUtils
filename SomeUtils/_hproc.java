@@ -13,13 +13,22 @@ import org.apache.commons.lang.math.NumberUtils;
 import SomeUtils.Bean.QueryItem;
 import SomeUtils.Bean.UserInfoViewBean;
 
+/**
+ * 
+ * @author b0050
+ *
+ */
 public class _hproc extends hproc {
 
 	/**
 	 * 送參數代替select動作.
-	 * @param tableName 資料表名稱
-	 * @param PKFieldName PK欄位名稱
-	 * @param Key PK的值
+	 * 
+	 * @param tableName
+	 *            資料表名稱
+	 * @param PKFieldName
+	 *            PK欄位名稱
+	 * @param Key
+	 *            PK的值
 	 * @return String[][] 回傳查詢結果
 	 * @throws SQLException
 	 * @throws Exception
@@ -38,17 +47,19 @@ public class _hproc extends hproc {
 	}
 
 	/**
-	 * 新增資料進資料庫,代入資料表名稱會自動取得該表的所有欄位
-	 * PNO部分,內部會使用createPNO來取得
-	 * @param tableName 資料表名稱
+	 * 新增資料進資料庫,代入資料表名稱會自動取得該表的所有欄位 PNO部分,內部會使用createPNO來取得
+	 * 
+	 * @param tableName
+	 *            資料表名稱
 	 * @throws Exception
 	 */
-	public void DoInster(String tableName) throws Exception {
+	public void DoInster(String tableName, String firstSIGN) throws Exception {
 		talk t = getTalk();
 		String sql = "select * from " + tableName;
 		String[][] allFieldName = t.getColumnsFromPool(sql);
 		String Fields = "";
 		String values = "";
+		String PNO = createPNO("PNO", getToday("YYYYmmdd"), tableName);
 		t.close();
 		String c = ",";
 		for (int i = 0; i < allFieldName.length; i++) {
@@ -58,9 +69,7 @@ public class _hproc extends hproc {
 			Fields += allFieldName[i][0] + c;
 
 			if (allFieldName[i][0].equals("PNO")) {
-				values += "'"
-						+ createPNO("PNO", getToday("YYYYmmdd"), tableName)
-						+ "'" + c;
+				values += "'" + PNO + "'" + c;
 			} else {
 				values += "'" + getValue(allFieldName[i][0]) + "'" + c;
 			}
@@ -68,14 +77,27 @@ public class _hproc extends hproc {
 		sql = "INSERT INTO " + tableName + " (" + Fields + ")" + "VALUES ("
 				+ values + ")";
 		t.execFromPool(sql);
+		sql = "INSERT INTO " + tableName + "_FLOWC"
+				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
+				+ "VALUES ('" + PNO + "','"+firstSIGN+"','"+getUser().trim()+"','"+ getNow() + "','"+firstSIGN+"'"+")";
+		t.execFromPool(sql);
+		sql = "INSERT INTO " + tableName + "_FLOWC_HIS"
+				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
+				+ "VALUES ('" + PNO + "','"+firstSIGN+"','"+getUser().trim()+"','"+ getNow() + "','"+firstSIGN+"'"+")";
+		t.execFromPool(sql);
+		t.close();
 		message("資料已送出!");
 	}
 
 	/**
 	 * 利用年月日 產生PK.
-	 * @param Key PK欄位的名稱
-	 * @param inToday 產生PK的日期
-	 * @param inTableName 資料表名稱
+	 * 
+	 * @param Key
+	 *            PK欄位的名稱
+	 * @param inToday
+	 *            產生PK的日期
+	 * @param inTableName
+	 *            資料表名稱
 	 * @return String 回傳獨一無二的字串編碼
 	 * @throws SQLException
 	 * @throws Exception
@@ -105,9 +127,13 @@ public class _hproc extends hproc {
 
 	/**
 	 * 帶入參數做查詢.有where的查詢才適用
-	 * @param field 要查詢的欄位,為一字串 如要找 A和B欄位直接給"A,B".
-	 * @param table 資料表名稱
-	 * @param condition where查詢條件
+	 * 
+	 * @param field
+	 *            要查詢的欄位,為一字串 如要找 A和B欄位直接給"A,B".
+	 * @param table
+	 *            資料表名稱
+	 * @param condition
+	 *            where查詢條件
 	 * @return String[][] 回傳查詢結果
 	 * @throws SQLException
 	 * @throws Exception
@@ -126,7 +152,9 @@ public class _hproc extends hproc {
 
 	/**
 	 * 將想要做判斷不可為空的欄位塞入陣列,如果為空 則中斷新增.
-	 * @param field String[][] 二微陣列
+	 * 
+	 * @param field
+	 *            String[][] 二微陣列
 	 * @return
 	 */
 	public boolean checkEmpty(String[][] field) {
@@ -143,8 +171,10 @@ public class _hproc extends hproc {
 
 	/**
 	 * 從UserInfoView取得員工資料
+	 * 
 	 * @param EMPID
-	 * @return
+	 *            String 員工編號
+	 * @return 回傳UserInfoViewBean類別
 	 * @throws SQLException
 	 * @throws Exception
 	 */
@@ -184,7 +214,29 @@ public class _hproc extends hproc {
 		return null;
 	}
 
-	public String setQueryTable(ArrayList<QueryItem> list, String tableName,
+	/**
+	 * @see DoQuery.java.
+	 * @param <br>
+	 *        list ArrayList<QueryItem>
+	 *        要查詢欄位先丟進去ArrayList.欄位名稱為資料庫欄位名稱,不是Dmaker欄位標題.
+	 *        標體命名請在相關欄位前面加上"QUERY_",日期區間UI欄位命名格式"QUERY_"+DB欄位名稱+"_S" or
+	 *        "QUERY_"+DB欄位名稱+"_E" S表示起始欄位 E表式結束欄位. 此為查詢結果的 table Header.<br>
+	 * @param <br>
+	 *        tableName String 資料表名稱<br>
+	 * @param <br>
+	 *        signFunctionName String 功能名稱,如:XXXXX申請單 用來取得簽核狀態.<br>
+	 * @param <br>
+	 *        empNameNo int 員工編號位於 所傳入list順序編號.(從零開始算).目的在於和設計模式中的表格欄位做對照.<br>
+	 * @param <br>
+	 *        signStateNo int 簽核狀態位於 所傳入list順序編號.(從零開始算).目的在於和設計模式中的表格欄位做對照.<br>
+	 * @param <br>
+	 *        otherCondition String 其他查詢條件,直接給字串即可. 如果此參數不為空
+	 *        字串中需要有"where"字串在裡面,如沒有要使用該參數請代入 "".<br>
+	 * @return 無回傳
+	 * @throws SQLException
+	 * @throws Exception
+	 */
+	public void setQueryTable(ArrayList<QueryItem> list, String tableName,
 			String signFunctionName, int empNameNo, int signStateNo,
 			String otherCondition) throws SQLException, Exception {
 
@@ -242,8 +294,13 @@ public class _hproc extends hproc {
 		}
 		String[] HeaderArray = tableHeaders.split(",");
 
+		if (otherCondition.equals("") && !conditionSqlString.equals("")) {
+			otherCondition = "where";
+		}
+
 		String sqlString = "SELECT " + selectField + " FROM " + tableName
 				+ " a " + otherCondition + conditionSqlString;
+
 		String[][] ret = getTalk().queryFromPool(sqlString);
 
 		for (int i = 0; i < ret.length; i++) {
@@ -292,9 +349,7 @@ public class _hproc extends hproc {
 		setTableData("QUERY_LIST", ret);
 		setTableHeader("QUERY_LIST", HeaderArray);
 
-		return "---------------DO_QUERY(\u9001\u51fa\u67e5\u8a62).html_action()----------------";
 	}
-
 
 	@Override
 	public String action(String paramString) throws Throwable {
