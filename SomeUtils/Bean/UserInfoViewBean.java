@@ -13,8 +13,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * UserInfoViewBean is a mapping of USER_INFO_VIEW Table.
- * 
- * @author sql2java
  */
 public class UserInfoViewBean implements Serializable {
 	
@@ -26,7 +24,7 @@ public class UserInfoViewBean implements Serializable {
 	private String quitdate;
 	private boolean quitdateIsModified = false;
 	private boolean quitdateIsInitialized = false;
-
+	
 	private String state;
 	private boolean stateIsModified = false;
 	private boolean stateIsInitialized = false;
@@ -34,11 +32,13 @@ public class UserInfoViewBean implements Serializable {
 	private String inadate;
 	private boolean inadateIsModified = false;
 	private boolean inadateIsInitialized = false;
-
+	/**
+	 * 取得代理人姓名
+	 */
 	private String agentName;
 	private boolean agentNameIsModified = false;
 	private boolean agentNameIsInitialized = false;
-
+	
 	private String agent;
 	private boolean agentIsModified = false;
 	private boolean agentIsInitialized = false;
