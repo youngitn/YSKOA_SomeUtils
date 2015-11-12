@@ -79,11 +79,15 @@ public class _hproc extends hproc {
 		t.execFromPool(sql);
 		sql = "INSERT INTO " + tableName + "_FLOWC"
 				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
-				+ "VALUES ('" + PNO + "','"+firstSIGN+"','"+getUser().trim()+"','"+ getNow() + "','"+firstSIGN+"'"+")";
+				+ "VALUES ('" + PNO + "','" + firstSIGN + "','"
+				+ getUser().trim() + "','" + getNow() + "','" + firstSIGN + "'"
+				+ ")";
 		t.execFromPool(sql);
 		sql = "INSERT INTO " + tableName + "_FLOWC_HIS"
 				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
-				+ "VALUES ('" + PNO + "','"+firstSIGN+"','"+getUser().trim()+"','"+ getNow() + "','"+firstSIGN+"'"+")";
+				+ "VALUES ('" + PNO + "','" + firstSIGN + "','"
+				+ getUser().trim() + "','" + getNow() + "','" + firstSIGN + "'"
+				+ ")";
 		t.execFromPool(sql);
 		t.close();
 		message("資料已送出!");
@@ -214,29 +218,24 @@ public class _hproc extends hproc {
 		return null;
 	}
 
-	/**
-	 * @see DoQuery.java.
-	 * @param <br>
-	 *        list ArrayList<QueryItem>
-	 *        要查詢欄位先丟進去ArrayList.欄位名稱為資料庫欄位名稱,不是Dmaker欄位標題.
-	 *        標體命名請在相關欄位前面加上"QUERY_",日期區間UI欄位命名格式"QUERY_"+DB欄位名稱+"_S" or
-	 *        "QUERY_"+DB欄位名稱+"_E" S表示起始欄位 E表式結束欄位. 此為查詢結果的 table Header.<br>
-	 * @param <br>
-	 *        tableName String 資料表名稱<br>
-	 * @param <br>
-	 *        signFunctionName String 功能名稱,如:XXXXX申請單 用來取得簽核狀態.<br>
-	 * @param <br>
-	 *        empNameNo int 員工編號位於 所傳入list順序編號.(從零開始算).目的在於和設計模式中的表格欄位做對照.<br>
-	 * @param <br>
-	 *        signStateNo int 簽核狀態位於 所傳入list順序編號.(從零開始算).目的在於和設計模式中的表格欄位做對照.<br>
-	 * @param <br>
-	 *        otherCondition String 其他查詢條件,直接給字串即可. 如果此參數不為空
-	 *        字串中需要有"where"字串在裡面,如沒有要使用該參數請代入 "".<br>
+	/**顯示查詢結果在名為"QUERY_LIST"的表格中.
+	 * @see DoQuery
+	 * @param list [ArrayList<QueryItem>]<br>
+	 * 要查詢欄位先丟進去ArrayList.欄位名稱為資料庫欄位名稱,不是Dmaker欄位標題.<br>
+	 * 標體命名請在相關欄位前面加上"QUERY_",日期區間UI欄位命名格式"QUERY_"+DB欄位名稱+"_S" or<br>
+	 * "QUERY_"+DB欄位名稱+"_E" S表示起始欄位 E表式結束欄位. 此為查詢結果的 table Header.<br>
+	 * @param tableName [String] 資料表名稱<br>
+	 * @param signFunctionName [String] 功能名稱,如:XXXXX申請單 用來取得簽核狀態.<br>
+	 * @param empNameNo [int] 員工編號位於 所傳入list順序編號.(從零開始算).目的在於和設計模式中的表格欄位做對照.<br>
+	 * @param signStateNo [int] 簽核狀態位於 所傳入list順序編號.(從零開始算).<br>
+	 *        -目的在於和設計模式中的表格欄位做對照.<br>
+	 * @param otherCondition [String] 其他查詢條件,直接給字串即可. 如果此參數不為空<br>
+	 *        -字串中需要有"where"字串在裡面,如沒有要使用該參數請代入 "".<br>
 	 * @return 無回傳
 	 * @throws SQLException
 	 * @throws Exception
 	 */
-	public void setQueryTable(ArrayList<QueryItem> list, String tableName,
+	public boolean setQueryTable(ArrayList<QueryItem> list, String tableName,
 			String signFunctionName, int empNameNo, int signStateNo,
 			String otherCondition) throws SQLException, Exception {
 
@@ -263,6 +262,11 @@ public class _hproc extends hproc {
 
 				break;
 			case 2:
+
+				if (!checkQueryForDateFieldStartAndEnd(q.getFieldName())) {
+					message("請輸入完整的日期區間以供查詢!");
+					return true;
+				}
 				if (!StringUtils.isEmpty(getValue("QUERY_" + q.getFieldName()
 						+ "_S"))) {
 					condition.add(q.getFieldName() + " between '"
@@ -315,7 +319,7 @@ public class _hproc extends hproc {
 					|| ret[i][signStateNo].trim().equals("END")) {
 
 				ret[i][signStateNo] = ret[i][signStateNo].trim()
-						+ "<font color=blue>(已結案)</font>";
+						+ "<br><font color=blue>(已結案)</font>";
 			} else {
 				// 如果還沒結案 就需要取得簽核人員的資料並顯示.
 				Vector<?> people = getApprovablePeople(signFunctionName,
@@ -336,7 +340,8 @@ public class _hproc extends hproc {
 					}
 				}
 				ret[i][signStateNo] = ret[i][signStateNo].trim()
-						+ "<font color=red>(未結案)" + sb.toString() + "</font>";
+						+ "<br><font color=red>(未結案)" + sb.toString()
+						+ "</font>";
 			}
 			// set SIGN state and who will sign in table data.==<
 		}
@@ -348,7 +353,28 @@ public class _hproc extends hproc {
 		}
 		setTableData("QUERY_LIST", ret);
 		setTableHeader("QUERY_LIST", HeaderArray);
+//		message(sqlString);//debug
+		return true;
 
+	}
+
+	/**
+	 * 
+	 * @param FieldName
+	 *            不需要加入"QUERY_" & "_S",直接使用DB欄位名稱.
+	 * @return
+	 */
+	public boolean checkQueryForDateFieldStartAndEnd(String FieldName) {
+		if (getValue("QUERY_" + FieldName + "_S").trim().length() != 0
+				&& getValue("QUERY_" + FieldName + "_E").trim().length() == 0) {
+			return false;
+		}
+		if (getValue("QUERY_" + FieldName + "_S").trim().length() == 0
+				&& getValue("QUERY_" + FieldName + "_E").trim().length() != 0) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
