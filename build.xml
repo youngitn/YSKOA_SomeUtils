@@ -14,6 +14,11 @@
 				<!--<exclude name="**/*.class"/>-->
 			</fileset>
 		</copy>
+		<copy encoding="UTF-8" includeemptydirs="false" todir="Z:\babylon\yskoa_uat\SomeUtils\DAO">
+			<fileset dir="SomeUtils\DAO">
+				<!--<exclude name="**/*.class"/>-->
+			</fileset>
+		</copy>
 		<copy encoding="UTF-8" includeemptydirs="false" todir="D:\root_dmaker\SomeUtils">
 			<fileset dir="SomeUtils">
 				<!--<exclude name="**/*.class"/>-->
@@ -21,6 +26,11 @@
 		</copy>
 		<copy encoding="UTF-8" includeemptydirs="false" todir="D:\root_dmaker\SomeUtils\Bean">
 			<fileset dir="SomeUtils\Bean">
+				<!--<exclude name="**/*.class"/>-->
+			</fileset>
+		</copy>
+		<copy encoding="UTF-8" includeemptydirs="false" todir="D:\root_dmaker\SomeUtils\DAO">
+			<fileset dir="SomeUtils\DAO">
 				<!--<exclude name="**/*.class"/>-->
 			</fileset>
 		</copy>

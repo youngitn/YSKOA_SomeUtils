@@ -9,6 +9,7 @@ import jcx.jform.hproc;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+
 import com.ysk.service.BaseService;
 
 import SomeUtils.Bean.QueryItem;
@@ -165,11 +166,12 @@ public class _hproc extends hproc {
 	}
 
 	/**
-	 * 將想要做判斷不可為空的欄位塞入陣列,如果為空 則中斷新增.
-	 * 
-	 * @param field
-	 *            String[][] 二微陣列
-	 * @return
+	 * 將想要做判斷不可為空的欄位塞入陣列,如果為空 則中斷新增,並會顯示message:欄位:XXX 不可空白.
+	 * @param field String[][] 二維陣列  <br>
+	 * 	EX:<br>    String[][] field = { { "RECBOOK_NO", "紀錄簿編號" },<br>
+				{ "RECBOOK_NAME", "紀錄簿名稱" }, { "DATE", "申請日期" },<br>
+				{ "REASON", "異動原因" }, { "CONTENT", "欲修訂內容" } };<br>
+	 * @return boolean 
 	 */
 	public boolean checkEmpty(String[][] field) {
 
