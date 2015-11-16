@@ -9,6 +9,7 @@ import jcx.jform.hproc;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import com.ysk.service.BaseService;
 
 import SomeUtils.Bean.QueryItem;
 import SomeUtils.Bean.UserInfoViewBean;
@@ -47,8 +48,8 @@ public class _hproc extends hproc {
 	}
 
 	/**
-	 * 新增資料進資料庫,代入資料表名稱會自動取得該表的所有欄位 PNO部分,內部會使用createPNO來取得
-	 * 
+	 * 新增資料進資料庫,代入資料表名稱會自動取得該表的所有欄位 PNO部分,內部會使用createPNO來取得.
+	 * 設計流程時 第一關請固定設計 "填單人確認".
 	 * @param tableName
 	 *            資料表名稱
 	 * @throws Exception
@@ -83,12 +84,21 @@ public class _hproc extends hproc {
 				+ getUser().trim() + "','" + getNow() + "','" + firstSIGN + "'"
 				+ ")";
 		t.execFromPool(sql);
+		
+		sql = "INSERT INTO " + tableName + "_FLOWC_HIS"
+				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
+				+ "VALUES ('" + PNO + "','填單人確認','"
+				+ getUser().trim() + "','" + getNow() + "','填單人確認'"
+				+ ")";
+		t.execFromPool(sql);
+		
 		sql = "INSERT INTO " + tableName + "_FLOWC_HIS"
 				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
 				+ "VALUES ('" + PNO + "','" + firstSIGN + "','"
 				+ getUser().trim() + "','" + getNow() + "','" + firstSIGN + "'"
 				+ ")";
 		t.execFromPool(sql);
+		
 		t.close();
 		message("資料已送出!");
 	}
@@ -218,19 +228,27 @@ public class _hproc extends hproc {
 		return null;
 	}
 
-	/**顯示查詢結果在名為"QUERY_LIST"的表格中.
+	/**
+	 * 顯示查詢結果在名為"QUERY_LIST"的表格中.
+	 * 
 	 * @see DoQuery
-	 * @param list [ArrayList<QueryItem>]<br>
-	 * 要查詢欄位先丟進去ArrayList.欄位名稱為資料庫欄位名稱,不是Dmaker欄位標題.<br>
-	 * 標體命名請在相關欄位前面加上"QUERY_",日期區間UI欄位命名格式"QUERY_"+DB欄位名稱+"_S" or<br>
-	 * "QUERY_"+DB欄位名稱+"_E" S表示起始欄位 E表式結束欄位. 此為查詢結果的 table Header.<br>
-	 * @param tableName [String] 資料表名稱<br>
-	 * @param signFunctionName [String] 功能名稱,如:XXXXX申請單 用來取得簽核狀態.<br>
-	 * @param empNameNo [int] 員工編號位於 所傳入list順序編號.(從零開始算).目的在於和設計模式中的表格欄位做對照.<br>
-	 * @param signStateNo [int] 簽核狀態位於 所傳入list順序編號.(從零開始算).<br>
-	 *        -目的在於和設計模式中的表格欄位做對照.<br>
-	 * @param otherCondition [String] 其他查詢條件,直接給字串即可. 如果此參數不為空<br>
-	 *        -字串中需要有"where"字串在裡面,如沒有要使用該參數請代入 "".<br>
+	 * @param list
+	 *            [ArrayList<QueryItem>]<br>
+	 *            要查詢欄位先丟進去ArrayList.欄位名稱為資料庫欄位名稱,不是Dmaker欄位標題.<br>
+	 *            標體命名請在相關欄位前面加上"QUERY_",日期區間UI欄位命名格式"QUERY_"+DB欄位名稱+"_S" or<br>
+	 *            "QUERY_"+DB欄位名稱+"_E" S表示起始欄位 E表式結束欄位. 此為查詢結果的 table Header.<br>
+	 * @param tableName
+	 *            [String] 資料表名稱<br>
+	 * @param signFunctionName
+	 *            [String] 功能名稱,如:XXXXX申請單 用來取得簽核狀態.<br>
+	 * @param empNameNo
+	 *            [int] 員工編號位於 所傳入list順序編號.(從零開始算).目的在於和設計模式中的表格欄位做對照.<br>
+	 * @param signStateNo
+	 *            [int] 簽核狀態位於 所傳入list順序編號.(從零開始算).<br>
+	 *            -目的在於和設計模式中的表格欄位做對照.<br>
+	 * @param otherCondition
+	 *            [String] 其他查詢條件,直接給字串即可. 如果此參數不為空<br>
+	 *            -字串中需要有"where"字串在裡面,如沒有要使用該參數請代入 "".<br>
 	 * @return 無回傳
 	 * @throws SQLException
 	 * @throws Exception
@@ -353,7 +371,7 @@ public class _hproc extends hproc {
 		}
 		setTableData("QUERY_LIST", ret);
 		setTableHeader("QUERY_LIST", HeaderArray);
-//		message(sqlString);//debug
+		// message(sqlString);//debug
 		return true;
 
 	}
@@ -375,6 +393,38 @@ public class _hproc extends hproc {
 		}
 
 		return true;
+	}
+	/**
+	 * 簡化表單填寫頁面的寄信功能.
+	 * @param EMPID 申請者ID
+	 * @param title 信件主旨
+	 * @param content 信件內容
+	 * @param fileName 附檔名稱  如無需求給:null
+	 * @param filePath 附檔路徑 如無需求給:''
+	 * @param FLOW_SING_LEVEL 收信主管層級 使用 Flow.FLOW_SING_LEVEL_10~1X 課:11 依此類推.
+	 * @throws Throwable
+	 */
+	public void sendEmailAfterAdd(String EMPID , String title , String content , String[] fileName , String filePath ,int FLOW_SING_LEVEL) throws Throwable {
+		// TODO Auto-generated method stub
+		BaseService service = new BaseService();
+		// get sign people
+		String approver = service.getBossBySignLevel(EMPID,
+				FLOW_SING_LEVEL);
+		Vector<String> idVector = new Vector<String>();
+		if (StringUtils.isNotEmpty(approver)) {
+			idVector.add(getEmail(approver));
+		}
+		idVector.add("admin");
+
+		String usr[] = ((String[]) idVector.toArray(new String[0]));
+
+		String sendRS = service.sendMailbccUTF8(usr, title, content, fileName, filePath,
+				"text/html");
+		if (sendRS.trim().equals("")) {
+			message("EMAIL已寄出通知");
+		} else {
+			message("EMAIL寄出失敗");
+		}
 	}
 
 	@Override
