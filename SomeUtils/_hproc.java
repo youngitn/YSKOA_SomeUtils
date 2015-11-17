@@ -1,7 +1,10 @@
 package SomeUtils;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 import jcx.db.talk;
@@ -49,8 +52,9 @@ public class _hproc extends hproc {
 	}
 
 	/**
-	 * 新增資料進資料庫,代入資料表名稱會自動取得該表的所有欄位 PNO部分,內部會使用createPNO來取得.
-	 * 設計流程時 第一關請固定設計 "填單人確認".
+	 * 新增資料進資料庫,代入資料表名稱會自動取得該表的所有欄位 PNO部分,內部會使用createPNO來取得. 設計流程時 第一關請固定設計
+	 * "填單人確認".
+	 * 
 	 * @param tableName
 	 *            資料表名稱
 	 * @throws Exception
@@ -85,21 +89,26 @@ public class _hproc extends hproc {
 				+ getUser().trim() + "','" + getNow() + "','" + firstSIGN + "'"
 				+ ")";
 		t.execFromPool(sql);
-		
+
 		sql = "INSERT INTO " + tableName + "_FLOWC_HIS"
 				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
-				+ "VALUES ('" + PNO + "','填單人確認','"
-				+ getUser().trim() + "','" + getNow() + "','填單人確認'"
-				+ ")";
+				+ "VALUES ('" + PNO + "','填單人確認','" + getUser().trim() + "','"
+				+ getNow() + "','填單人確認'" + ")";
 		t.execFromPool(sql);
-		
+		// 需要做時間處理.因為流程簽核順序試用時間來做排序.
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+		Calendar calendar = Calendar.getInstance();
+		Date newDate = calendar.getTime();
+		calendar.setTime(newDate);
+		calendar.add(Calendar.SECOND, 5);
+		// calendar.getTime();
 		sql = "INSERT INTO " + tableName + "_FLOWC_HIS"
 				+ " (PNO ,F_INP_STAT , F_INP_ID , F_INP_TIME , F_INP_INFO)"
 				+ "VALUES ('" + PNO + "','" + firstSIGN + "','"
-				+ getUser().trim() + "','" + getNow() + "','" + firstSIGN + "'"
-				+ ")";
+				+ getUser().trim() + "','" + sdf.format(calendar.getTime())
+				+ "','" + firstSIGN + "'" + ")";
 		t.execFromPool(sql);
-		
+
 		t.close();
 		message("資料已送出!");
 	}
@@ -136,7 +145,7 @@ public class _hproc extends hproc {
 			pno = inToday + StringUtils.leftPad(idx + "", 3, "0");
 		}
 		t.close();
-		System.gc();
+
 		return pno;
 	}
 
@@ -167,11 +176,14 @@ public class _hproc extends hproc {
 
 	/**
 	 * 將想要做判斷不可為空的欄位塞入陣列,如果為空 則中斷新增,並會顯示message:欄位:XXX 不可空白.
-	 * @param field String[][] 二維陣列  <br>
-	 * 	EX:<br>    String[][] field = { { "RECBOOK_NO", "紀錄簿編號" },<br>
-				{ "RECBOOK_NAME", "紀錄簿名稱" }, { "DATE", "申請日期" },<br>
-				{ "REASON", "異動原因" }, { "CONTENT", "欲修訂內容" } };<br>
-	 * @return boolean 
+	 * 
+	 * @param field
+	 *            String[][] 二維陣列 <br>
+	 *            EX:<br>
+	 *            String[][] field = { { "RECBOOK_NO", "紀錄簿編號" },<br>
+	 *            { "RECBOOK_NAME", "紀錄簿名稱" }, { "DATE", "申請日期" },<br>
+	 *            { "REASON", "異動原因" }, { "CONTENT", "欲修訂內容" } };<br>
+	 * @return boolean
 	 */
 	public boolean checkEmpty(String[][] field) {
 
@@ -396,22 +408,32 @@ public class _hproc extends hproc {
 
 		return true;
 	}
+
 	/**
 	 * 簡化表單填寫頁面的寄信功能.
-	 * @param EMPID 申請者ID
-	 * @param title 信件主旨
-	 * @param content 信件內容
-	 * @param fileName 附檔名稱  如無需求給:null
-	 * @param filePath 附檔路徑 如無需求給:''
-	 * @param FLOW_SING_LEVEL 收信主管層級 使用 Flow.FLOW_SING_LEVEL_10~1X 課:11 依此類推.
+	 * 
+	 * @param EMPID
+	 *            申請者ID
+	 * @param title
+	 *            信件主旨
+	 * @param content
+	 *            信件內容
+	 * @param fileName
+	 *            附檔名稱 如無需求給:null
+	 * @param filePath
+	 *            附檔路徑 如無需求給:''
+	 * @param FLOW_SING_LEVEL
+	 *            收信主管層級 使用 Flow.FLOW_SING_LEVEL_10~1X 課:11 依此類推.
 	 * @throws Throwable
 	 */
-	public void sendEmailAfterAdd(String EMPID , String title , String content , String[] fileName , String filePath ,int FLOW_SING_LEVEL) throws Throwable {
+	public void sendEmailAfterAdd(String EMPID, String title, String content,
+			String[] fileName, String filePath, int FLOW_SING_LEVEL)
+			throws Throwable {
 		// TODO Auto-generated method stub
 		BaseService service = new BaseService();
 		// get sign people
-		String approver = service.getBossBySignLevel(EMPID,
-				FLOW_SING_LEVEL);
+
+		String approver = service.getBossBySignLevel(EMPID, FLOW_SING_LEVEL);
 		Vector<String> idVector = new Vector<String>();
 		if (StringUtils.isNotEmpty(approver)) {
 			idVector.add(getEmail(approver));
@@ -420,13 +442,40 @@ public class _hproc extends hproc {
 
 		String usr[] = ((String[]) idVector.toArray(new String[0]));
 
-		String sendRS = service.sendMailbccUTF8(usr, title, content, fileName, filePath,
-				"text/html");
+		String sendRS = service.sendMailbccUTF8(usr, title, content, fileName,
+				filePath, "text/html");
 		if (sendRS.trim().equals("")) {
-			message("EMAIL已寄出通知");
+			addScript("alert('EMAIL已寄出通知');history.go(0)");
 		} else {
 			message("EMAIL寄出失敗");
 		}
+
+	}
+
+	public void sendEmailAfterAdd(String EMPID, String title, String content,
+			String[] fileName, String filePath, String toSendEMPID)
+			throws Throwable {
+		// TODO Auto-generated method stub
+		BaseService service = new BaseService();
+		// get sign people
+
+		Vector<String> idVector = new Vector<String>();
+		if (StringUtils.isNotEmpty(toSendEMPID)) {
+			idVector.add(getEmail(toSendEMPID));
+		}
+		idVector.add("admin");
+
+		String usr[] = ((String[]) idVector.toArray(new String[0]));
+
+		String sendRS = service.sendMailbccUTF8(usr, title, content, fileName,
+				filePath, "text/html");
+		if (sendRS.trim().equals("")) {
+			addScript("alert('EMAIL已寄出通知');history.go(0)");
+			// message("EMAIL已寄出通知");
+		} else {
+			message("EMAIL寄出失敗");
+		}
+
 	}
 
 	@Override
