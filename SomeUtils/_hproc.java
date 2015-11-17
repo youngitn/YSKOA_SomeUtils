@@ -199,7 +199,7 @@ public class _hproc extends hproc {
 
 	/**
 	 * 從UserInfoView取得員工資料
-	 * 
+	 * @deprecated 已有DAO可用
 	 * @param EMPID
 	 *            String 員工編號
 	 * @return 回傳UserInfoViewBean類別

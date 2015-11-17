@@ -23,6 +23,7 @@ public class _bproc extends bproc {
 	
 	/**
 	 * 查詢UserInfoView的資料 並塞回此類別.
+	 * @deprecated 已有DAO可用
 	 * @param EMPID 員工編號
 	 * @return 回傳一個UserInfoViewBean類別,或者null
 	 * @throws SQLException
