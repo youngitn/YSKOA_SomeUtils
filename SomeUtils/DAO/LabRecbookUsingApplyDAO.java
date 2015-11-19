@@ -118,6 +118,7 @@ public class LabRecbookUsingApplyDAO extends hproc {
 	public void update(LabRecbookUsingApplyBean bean) throws SQLException,
 			Exception {
 		t.execFromPool("update LAB_RECBOOK_USING_APPLY set "
+				+ " REQ_EMPID = '"+ bean.getREQ_EMPID() + "'"
 				+ " RECBOOK_NO = '"+ bean.getRECBOOK_NO() + "'" 
 				+ ", REC_END_DATE = '"+ bean.getREC_END_DATE() + "'" 
 				+ ", REC_START_DATE = '"+ bean.getREC_START_DATE() + "'"
