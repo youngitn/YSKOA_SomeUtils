@@ -112,11 +112,12 @@ public class _hproc extends hproc {
 		t.close();
 		message("資料已送出!");
 	}
-	
+
 	/**
-	 * 純粹新增.
-	 * 前提是你的DB欄位 和UI欄位名稱一致 且PK名稱為PNO.
-	 * @param tableName 資料表名稱.
+	 * 純粹新增. 前提是你的DB欄位 和UI欄位名稱一致 且PK名稱為PNO.
+	 * 
+	 * @param tableName
+	 *            資料表名稱.
 	 * @throws Exception
 	 */
 	public void DoInster(String tableName) throws Exception {
@@ -233,6 +234,7 @@ public class _hproc extends hproc {
 
 	/**
 	 * 從UserInfoView取得員工資料
+	 * 
 	 * @deprecated 已有DAO可用
 	 * @param EMPID
 	 *            String 員工編號
@@ -301,6 +303,90 @@ public class _hproc extends hproc {
 	 * @throws SQLException
 	 * @throws Exception
 	 */
+	public boolean setQueryTable(ArrayList<QueryItem> list, String tableName,
+			String otherCondition) throws SQLException, Exception {
+
+		String selectField = "";
+		String tableHeaders = "";
+		String c = ",";
+		String conditionSqlString = "";
+		String AND = " and ";
+		ArrayList<String> condition = new ArrayList<String>();
+		for (QueryItem q : list) {
+			if (list.indexOf(q) == list.size() - 1) {
+				c = "";
+			}
+			selectField += q.getFieldName() + c;
+			tableHeaders += q.getChineseName() + c;
+			// process search type
+
+			switch (q.getSearchType()) {
+			case 1:
+				if (!StringUtils.isEmpty(getValue("QUERY_" + q.getFieldName()))) {
+					condition.add(q.getFieldName() + "= '"
+							+ getValue("QUERY_" + q.getFieldName()) + "'");
+				}
+
+				break;
+			case 2:
+
+				if (!checkQueryForDateFieldStartAndEnd(q.getFieldName())) {
+					message("請輸入完整的日期區間以供查詢!");
+					return true;
+				}
+				if (!StringUtils.isEmpty(getValue("QUERY_" + q.getFieldName()
+						+ "_S"))) {
+					condition.add(q.getFieldName() + " between '"
+							+ getValue("QUERY_" + q.getFieldName() + "_S")
+							+ "' and '"
+							+ getValue("QUERY_" + q.getFieldName() + "_E")
+							+ "'");
+				}
+
+				break;
+			case 0:
+
+				break;
+
+			default:
+				break;
+			}
+
+		}
+
+		if (condition.size() > 0) {
+			conditionSqlString = AND;
+			for (String s : condition) {
+				if (condition.indexOf(s) == condition.size() - 1) {
+					AND = "";
+				}
+				conditionSqlString += s + AND;
+			}
+		}
+		String[] HeaderArray = tableHeaders.split(",");
+
+		if (otherCondition.equals("") && !conditionSqlString.equals("")) {
+			otherCondition = "where 1 = 1";
+		}
+
+		String sqlString = "SELECT " + selectField + " FROM " + tableName
+				+" "+ otherCondition +" " + conditionSqlString;
+
+		String[][] ret = getTalk().queryFromPool(sqlString);
+
+		getTalk().close();
+		if (ret.length <= 0) {
+			message("查無資料!");
+
+		}
+		setTableData("QUERY_LIST", ret);
+		setTableHeader("QUERY_LIST", HeaderArray);
+		message(sqlString);
+		// message(sqlString);//debug
+		return true;
+
+	}
+
 	public boolean setQueryTable(ArrayList<QueryItem> list, String tableName,
 			String signFunctionName, int empNameNo, int signStateNo,
 			String otherCondition) throws SQLException, Exception {
