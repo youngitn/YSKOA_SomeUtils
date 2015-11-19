@@ -61,7 +61,7 @@ public class _hproc extends hproc {
 	 */
 	public void DoInster(String tableName, String firstSIGN) throws Exception {
 		talk t = getTalk();
-		String sql = "select * from " + tableName;
+		String sql = "select * from " + tableName + " where 1 = 0";
 		String[][] allFieldName = t.getColumnsFromPool(sql);
 		String Fields = "";
 		String values = "";
@@ -77,7 +77,7 @@ public class _hproc extends hproc {
 			if (allFieldName[i][0].equals("PNO")) {
 				values += "'" + PNO + "'" + c;
 			} else {
-				values += "'" + getValue(allFieldName[i][0]) + "'" + c;
+				values += "'" + getValue(allFieldName[i][0]).trim() + "'" + c;
 			}
 		}
 		sql = "INSERT INTO " + tableName + " (" + Fields + ")" + "VALUES ("
@@ -109,6 +109,40 @@ public class _hproc extends hproc {
 				+ "','" + firstSIGN + "'" + ")";
 		t.execFromPool(sql);
 
+		t.close();
+		message("資料已送出!");
+	}
+	
+	/**
+	 * 純粹新增.
+	 * 前提是你的DB欄位 和UI欄位名稱一致 且PK名稱為PNO.
+	 * @param tableName 資料表名稱.
+	 * @throws Exception
+	 */
+	public void DoInster(String tableName) throws Exception {
+		talk t = getTalk();
+		String sql = "select * from " + tableName + " where 1 = 0";
+		String[][] allFieldName = t.getColumnsFromPool(sql);
+		String Fields = "";
+		String values = "";
+		String PNO = createPNO("PNO", getToday("YYYYmmdd"), tableName);
+		t.close();
+		String c = ",";
+		for (int i = 0; i < allFieldName.length; i++) {
+			if (i == allFieldName.length - 1) {
+				c = "";
+			}
+			Fields += allFieldName[i][0] + c;
+
+			if (allFieldName[i][0].equals("PNO")) {
+				values += "'" + PNO + "'" + c;
+			} else {
+				values += "'" + getValue(allFieldName[i][0]).trim() + "'" + c;
+			}
+		}
+		sql = "INSERT INTO " + tableName + " (" + Fields + ")" + "VALUES ("
+				+ values + ")";
+		t.execFromPool(sql);
 		t.close();
 		message("資料已送出!");
 	}
