@@ -381,8 +381,7 @@ public class _hproc extends hproc {
 		}
 		setTableData("QUERY_LIST", ret);
 		setTableHeader("QUERY_LIST", HeaderArray);
-		message(sqlString);
-		// message(sqlString);//debug
+		//message(sqlString);//debug
 		return true;
 
 	}
