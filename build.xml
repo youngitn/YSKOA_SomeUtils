@@ -34,6 +34,11 @@
 				<!--<exclude name="**/*.class"/>-->
 			</fileset>
 		</copy>
+		<copy encoding="UTF-8" includeemptydirs="false" todir="D:\root_dmaker\SomeUtils\DAO\Interface">
+			<fileset dir="SomeUtils\DAO\Interface">
+				<!--<exclude name="**/*.class"/>-->
+			</fileset>
+		</copy>
 	</target>
 </project>
 
