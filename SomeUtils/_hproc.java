@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Vector;
 
 import jcx.db.talk;
+
 import jcx.jform.hproc;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +22,10 @@ import SomeUtils.Bean.UserInfoViewBean;
 /**
  * 
  * @author b0050
+ *
+ */
+/**
+ * @author YangTing
  *
  */
 public class _hproc extends hproc {
@@ -369,8 +374,8 @@ public class _hproc extends hproc {
 			otherCondition = "where 1 = 1";
 		}
 
-		String sqlString = "SELECT " + selectField + " FROM " + tableName
-				+" "+ otherCondition +" " + conditionSqlString;
+		String sqlString = "SELECT " + selectField + " FROM " + tableName + " "
+				+ otherCondition + " " + conditionSqlString;
 
 		String[][] ret = getTalk().queryFromPool(sqlString);
 
@@ -381,7 +386,7 @@ public class _hproc extends hproc {
 		}
 		setTableData("QUERY_LIST", ret);
 		setTableHeader("QUERY_LIST", HeaderArray);
-		//message(sqlString);//debug
+		// message(sqlString);//debug
 		return true;
 
 	}
