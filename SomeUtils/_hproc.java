@@ -455,7 +455,7 @@ public class _hproc extends hproc {
 		String[] HeaderArray = tableHeaders.split(",");
 
 		if (otherCondition.equals("") && !conditionSqlString.equals("")) {
-			otherCondition = "where";
+			otherCondition = "where 1 = 1 ";
 		}
 
 		String sqlString = "SELECT " + selectField + " FROM " + tableName
@@ -509,7 +509,7 @@ public class _hproc extends hproc {
 		}
 		setTableData("QUERY_LIST", ret);
 		setTableHeader("QUERY_LIST", HeaderArray);
-		// message(sqlString);//debug
+		//message(sqlString);//debug
 		return true;
 
 	}
