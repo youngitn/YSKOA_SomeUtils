@@ -4,15 +4,15 @@ import java.sql.SQLException;
 
 import jcx.db.talk;
 import jcx.jform.hproc;
-import SomeUtils.Bean.ProductDevProjectManageAndCtrlScheduleBean;
-import SomeUtils.DAO.Interface.ProductDevProjectManageAndCtrlScheduleDAOInterface;
+import SomeUtils.Bean.ProductDevProjectScheduleBean;
+import SomeUtils.DAO.Interface.ProductDevProjectScheduleDAOInterface;
 
-public class ProductDevProjectManageAndCtrlScheduleDAO extends hproc implements
-		ProductDevProjectManageAndCtrlScheduleDAOInterface {
+public class ProductDevProjectScheduleDAO extends hproc implements
+		ProductDevProjectScheduleDAOInterface {
 
 	talk t;
-	String tableString =  "PRODUCT_DEV_PROJECT_MANAGE_AND_CTRL_SCHEDULE";
-	public ProductDevProjectManageAndCtrlScheduleDAO(talk t) {
+	String tableString =  "PRODUCT_DEV_PROJECT_SCHEDULE";
+	public ProductDevProjectScheduleDAO(talk t) {
 		this.t = t;
 	}
 
@@ -23,16 +23,16 @@ public class ProductDevProjectManageAndCtrlScheduleDAO extends hproc implements
 	}
 
 	@Override
-	public ProductDevProjectManageAndCtrlScheduleBean getProductDevProjectManageAndCtrlScheduleBean(
+	public ProductDevProjectScheduleBean getProductDevProjectScheduleBean(
 			String PNO) throws SQLException, Exception {
 		// TODO Auto-generated method stub
-		ProductDevProjectManageAndCtrlScheduleBean pBean = null;
+		ProductDevProjectScheduleBean pBean = null;
 
 		String[][] ret = t
 				.queryFromPool("select * from "+tableString+" where PNO = '"
 						+ PNO + "'");
 
-		pBean = new ProductDevProjectManageAndCtrlScheduleBean(ret[0][0],// PNO
+		pBean = new ProductDevProjectScheduleBean(ret[0][0],// PNO
 				ret[0][1],// PROJECT_NO
 				ret[0][2],// EXP_MATERIAL_ATTENDANCE_DATE
 				ret[0][3],// EXP_SMALL_TEST_DATE
@@ -54,7 +54,7 @@ public class ProductDevProjectManageAndCtrlScheduleDAO extends hproc implements
 	}
 
 	@Override
-	public void update(ProductDevProjectManageAndCtrlScheduleBean bean)
+	public void update(ProductDevProjectScheduleBean bean)
 			throws SQLException, Exception {
 		// TODO Auto-generated method stub
 		t.execFromPool("update "+tableString+" set "

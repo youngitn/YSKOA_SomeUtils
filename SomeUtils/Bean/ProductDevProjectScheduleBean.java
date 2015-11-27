@@ -2,7 +2,7 @@ package SomeUtils.Bean;
 
 import java.io.Serializable;
 
-public class ProductDevProjectManageAndCtrlScheduleBean implements Serializable {
+public class ProductDevProjectScheduleBean implements Serializable {
 
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class ProductDevProjectManageAndCtrlScheduleBean implements Serializable 
 	private String REFERENCE_FILE_2;
 	private String EFERENCE_FILE_3;
 
-	public ProductDevProjectManageAndCtrlScheduleBean(String pNO,
+	public ProductDevProjectScheduleBean(String pNO,
 			String pROJECT_NO, String eXP_MATERIAL_ATTENDANCE_DATE,
 			String eXP_SMALL_TEST_DATE, String eXP_SMALL_TEST_END_DATE,
 			String eXP_MIDDLE_TEST_DATE, String eXP_METHODOLOGY_BEGIN_DATE,

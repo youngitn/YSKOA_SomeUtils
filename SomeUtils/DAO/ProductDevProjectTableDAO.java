@@ -4,20 +4,20 @@ import java.sql.SQLException;
 
 import jcx.db.talk;
 import jcx.jform.hproc;
-import SomeUtils.Bean.ProductDevProjectManageAndCtrlTableBean;
-import SomeUtils.DAO.Interface.ProductDevProjectManageAndCtrlTableDAOInterface;
+import SomeUtils.Bean.ProductDevProjectTableBean;
+import SomeUtils.DAO.Interface.ProductDevProjectTableDAOInterface;
 
 //PRODUCT_DEV_PROJECT_MANAGE_AND_CTRL_TABLE
-public class ProductDevProjectManageAndCtrlTableDAO extends hproc implements
-		ProductDevProjectManageAndCtrlTableDAOInterface {
+public class ProductDevProjectTableDAO extends hproc implements
+		ProductDevProjectTableDAOInterface {
 	talk t;
 	String tablesString = "PRODUCT_DEV_PROJECT_MANAGE_AND_CTRL_TABLE";
-	public ProductDevProjectManageAndCtrlTableDAO(talk t) {
+	public ProductDevProjectTableDAO(talk t) {
 		this.t = t;
 	}
 
 	@Override
-	public void update(ProductDevProjectManageAndCtrlTableBean bean)
+	public void update(ProductDevProjectTableBean bean)
 			throws SQLException, Exception {
 		// TODO Auto-generated method stub
 		t.execFromPool("update "+tablesString+" set "
@@ -45,16 +45,16 @@ public class ProductDevProjectManageAndCtrlTableDAO extends hproc implements
 	}
 
 	@Override
-	public ProductDevProjectManageAndCtrlTableBean getProductDevProjectManageAndCtrlTableBean(
+	public ProductDevProjectTableBean getProductDevProjectTableBean(
 			String PNO) throws SQLException, Exception {
 		// TODO Auto-generated method stub
-		ProductDevProjectManageAndCtrlTableBean pBean = null;
+		ProductDevProjectTableBean pBean = null;
 
 		String[][] ret = t
 				.queryFromPool("select * from "+tablesString+" where PNO = '"
 						+ PNO + "'");
 
-		pBean = new ProductDevProjectManageAndCtrlTableBean(ret[0][0],// PNO
+		pBean = new ProductDevProjectTableBean(ret[0][0],// PNO
 				ret[0][1],// DATE
 				ret[0][2],// P_NAME
 				ret[0][3],// DESCRIPTION

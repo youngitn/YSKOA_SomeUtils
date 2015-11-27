@@ -2,7 +2,7 @@ package SomeUtils.Bean;
 
 import java.io.Serializable;
 
-public class ProductDevProjectManageAndCtrlTableBean implements Serializable {
+public class ProductDevProjectTableBean implements Serializable {
 
 	/**
 	 * 
@@ -29,7 +29,7 @@ public class ProductDevProjectManageAndCtrlTableBean implements Serializable {
 	private String IS_APPROVE;
 	private String PROJECT_NO;
 
-	public ProductDevProjectManageAndCtrlTableBean(String pNO, String dATE,
+	public ProductDevProjectTableBean(String pNO, String dATE,
 			String p_NAME, String dESCRIPTION, String eXP_DATE,
 			String gENERIC_CNAME, String gENERIC_ENAME, String dOSAGE_FORM,
 			String dOSE, String pACKING, String dEV_TYPE, String mEDICINE_TYPE,
