@@ -28,14 +28,14 @@ public class ProductDevProjectTableBean implements Serializable {
 	private String RD_ATTACHED;
 	private String IS_APPROVE;
 	private String PROJECT_NO;
-
+	private String REQ_EMPID;
 	public ProductDevProjectTableBean(String pNO, String dATE,
 			String p_NAME, String dESCRIPTION, String eXP_DATE,
 			String gENERIC_CNAME, String gENERIC_ENAME, String dOSAGE_FORM,
 			String dOSE, String pACKING, String dEV_TYPE, String mEDICINE_TYPE,
 			String sALES_ATTACHED, String lAW_ATTACHED, String pURCH_ATTACHED,
 			String pROCESS_ATTACHED, String rD_ATTACHED, String iS_APPROVE,
-			String pROJECT_NO) {
+			String pROJECT_NO, String rEQ_EMPID) {
 		super();
 		PNO = pNO;
 		DATE = dATE;
@@ -56,6 +56,7 @@ public class ProductDevProjectTableBean implements Serializable {
 		RD_ATTACHED = rD_ATTACHED;
 		IS_APPROVE = iS_APPROVE;
 		PROJECT_NO = pROJECT_NO;
+		REQ_EMPID = rEQ_EMPID;
 
 	}
 
@@ -209,6 +210,14 @@ public class ProductDevProjectTableBean implements Serializable {
 
 	public void setPROJECT_NO(String pROJECT_NO) {
 		PROJECT_NO = pROJECT_NO;
+	}
+	
+	public String getREQ_EMPID() {
+		return REQ_EMPID;
+	}
+
+	public void setREQ_EMPID(String rEQ_EMPID) {
+		REQ_EMPID = rEQ_EMPID;
 	}
 
 }

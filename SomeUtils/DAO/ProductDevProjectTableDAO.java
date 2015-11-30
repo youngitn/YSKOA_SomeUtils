@@ -11,7 +11,7 @@ import SomeUtils.DAO.Interface.ProductDevProjectTableDAOInterface;
 public class ProductDevProjectTableDAO extends hproc implements
 		ProductDevProjectTableDAOInterface {
 	talk t;
-	String tablesString = "PRODUCT_DEV_PROJECT_MANAGE_AND_CTRL_TABLE";
+	String tablesString = "PRODUCT_DEV_PROJECT_TABLE";
 	public ProductDevProjectTableDAO(talk t) {
 		this.t = t;
 	}
@@ -72,7 +72,8 @@ public class ProductDevProjectTableDAO extends hproc implements
 				ret[0][15],// PROCESS_ATTACHED
 				ret[0][16],// RD_ATTACHED
 				ret[0][17],// IS_APPROVE
-				ret[0][18]);// PROJECT_NO
+				ret[0][18],// PROJECT_NO
+				ret[0][19]);// REW_EMPID
 		t.close();
 		return pBean;
 	}

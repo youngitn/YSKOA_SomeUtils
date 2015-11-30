@@ -100,5 +100,40 @@ public class ProductDevProjectScheduleDAO extends hproc implements
 				+ " where PNO = '" + bean.getPNO() + "'");
 		t.close();
 	}
+	
+	public void insert(ProductDevProjectScheduleBean bean) throws SQLException, Exception {
+		String Fields = "PNO,"+
+		"PROJECT_NO,"+
+		"EXP_MATERIAL_ATTENDANCE_DATE,"+
+		"EXP_SMALL_TEST_DATE,"+
+		"EXP_SMALL_TEST_END_DATE,"+
+		"EXP_MIDDLE_TEST_DATE,"+
+		"EXP_METHODOLOGY_BEGIN_DATE,"+
+		"EXP_STABILITY_SAMPLES_PLACED_DATE,"+
+		"EXP_REPORTING_DATE,"+
+		"PROJECT_STATUS,"+
+		"CLOSING_DATE,"+
+		"REFERENCE_FILE_1,"+
+		"REFERENCE_FILE_2,"+
+		"REFERENCE_FILE_3";
+		
+		t.execFromPool("INSERT INTO " + tableString + " (" + Fields + ")" + " VALUES ("+
+				"'"+bean.getPNO()+"',"+
+				"'"+bean.getPROJECT_NO()+"',"+
+				"'"+bean.getEXP_MATERIAL_ATTENDANCE_DATE()+"',"+
+				"'"+bean.getEXP_SMALL_TEST_DATE()+"',"+
+				"'"+bean.getEXP_SMALL_TEST_END_DATE()+"',"+
+				"'"+bean.getEXP_MIDDLE_TEST_DATE()+"',"+
+				"'"+bean.getEXP_METHODOLOGY_BEGIN_DATE()+"',"+
+				"'"+bean.getEXP_STABILITY_SAMPLES_PLACED_DATE()+"',"+
+				"'"+bean.getEXP_REPORTING_DATE()+"',"+
+				"'"+bean.getPROJECT_STATUS()+"',"+
+				"'"+bean.getCLOSING_DATE()+"',"+
+				"'"+bean.getREFERENCE_FILE_1()+"',"+
+				"'"+bean.getREFERENCE_FILE_2()+"',"+
+				"'"+bean.getREFERENCE_FILE_3()+"'"+
+				");");
+		
+	}
 
 }
