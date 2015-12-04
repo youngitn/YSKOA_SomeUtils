@@ -284,7 +284,7 @@ public class _hproc extends hproc {
 	}
 
 	/**
-	 * 顯示查詢結果在名為"QUERY_LIST"的表格中.
+	 * 顯示查詢結果在名為"QUERY_LIST"的表格中,沒有簽核狀態的查詢.
 	 * 
 	 * @see DoQuery
 	 * @param list
@@ -390,7 +390,19 @@ public class _hproc extends hproc {
 		return true;
 
 	}
-
+	
+	/**
+	 * 帶簽核狀態的查詢.
+	 * @param list
+	 * @param tableName
+	 * @param signFunctionName
+	 * @param empNameNo
+	 * @param signStateNo
+	 * @param otherCondition
+	 * @return
+	 * @throws SQLException
+	 * @throws Exception
+	 */
 	public boolean setQueryTable(ArrayList<QueryItem> list, String tableName,
 			String signFunctionName, int empNameNo, int signStateNo,
 			String otherCondition) throws SQLException, Exception {
@@ -495,7 +507,8 @@ public class _hproc extends hproc {
 						sb.append(")");
 					}
 				}
-				ret[i][signStateNo] = ret[i][signStateNo].trim()
+				String state[][] =  getTalk().queryFromPool("select F_INP_STAT from "+tableName+"_FLOWC where PNO = '"+ret[i][0]+"'");
+				ret[i][signStateNo] = state[0][0].trim()
 						+ "<br><font color=red>(未結案)" + sb.toString()
 						+ "</font>";
 			}
