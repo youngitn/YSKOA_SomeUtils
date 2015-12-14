@@ -11,12 +11,10 @@ public class SubProductDevProjectTableBean implements Serializable{
 	private String DEPT_FLAG;
 	private String MSATER_PNO;
 	private String SUB_PNO;
-	public SubProductDevProjectTableBean(String dEPT_FLAG, String mSATER_PNO,
-			String sUB_PNO) {
+	public SubProductDevProjectTableBean(String dEPT_FLAG, String mSATER_PNO) {
 		super();
 		DEPT_FLAG = dEPT_FLAG;
 		MSATER_PNO = mSATER_PNO;
-		SUB_PNO = sUB_PNO;
 	}
 	public String getDEPT_FLAG() {
 		return DEPT_FLAG;

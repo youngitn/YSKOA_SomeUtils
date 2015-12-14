@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Vector;
 
 import jcx.db.talk;
-
 import jcx.jform.hproc;
 
 import org.apache.commons.lang.StringUtils;
@@ -117,7 +116,7 @@ public class _hproc extends hproc {
 		t.close();
 		message("資料已送出!");
 	}
-
+	
 	/**
 	 * 純粹新增. 前提是你的DB欄位 和UI欄位名稱一致 且PK名稱為PNO.
 	 * 
