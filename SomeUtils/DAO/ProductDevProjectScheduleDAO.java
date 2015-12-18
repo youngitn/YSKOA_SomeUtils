@@ -52,6 +52,40 @@ public class ProductDevProjectScheduleDAO extends hproc implements
 		return pBean;
 
 	}
+	
+	public ProductDevProjectScheduleBean getProductDevProjectScheduleBeanByProjectNo(
+			String ProjectNo) throws SQLException, Exception {
+		// TODO Auto-generated method stub
+		ProductDevProjectScheduleBean pBean = null;
+
+		String[][] ret = t
+				.queryFromPool("select * from "+tableString+" where PROJECT_NO = '"
+						+ ProjectNo + "'");
+
+		
+
+		t.close();
+		if (ret.length != 0 ){
+			pBean = new ProductDevProjectScheduleBean(ret[0][0],// PNO
+					ret[0][1],// PROJECT_NO
+					ret[0][2],// EXP_MATERIAL_ATTENDANCE_DATE
+					ret[0][3],// EXP_SMALL_TEST_DATE
+					ret[0][4],// EXP_SMALL_TEST_END_DATE
+					ret[0][5],// EXP_MIDDLE_TEST_DATE
+					ret[0][6],// EXP_METHODOLOGY_BEGIN_DATE
+					ret[0][7],// EXP_STABILITY_SAMPLES_PLACED_DATE
+					ret[0][8],// EXP_REPORTING_DATE
+					ret[0][9],// PROJECT_STATUS
+					ret[0][10],// CLOSING_DATE
+					ret[0][11],// REFERENCE_FILE_1
+					ret[0][12],// REFERENCE_FILE_2
+					ret[0][13]// REFERENCE_FILE_3
+			);
+			return pBean;
+		}
+		return null;
+
+	}
 
 	@Override
 	public void update(ProductDevProjectScheduleBean bean)

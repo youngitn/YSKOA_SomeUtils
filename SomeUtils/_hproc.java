@@ -481,11 +481,12 @@ public class _hproc extends hproc {
 
 			// set SIGN state and who will sign in table data.==>
 			// the if-statement like below...may be more.
-			if (ret[i][signStateNo].trim().equals("歸檔")
-					|| ret[i][signStateNo].trim().equals("結案")
-					|| ret[i][signStateNo].trim().equals("END")) {
+			String state[][] =  getTalk().queryFromPool("select F_INP_STAT from "+tableName+"_FLOWC where PNO = '"+ret[i][0]+"'");
+			if (state[0][0].trim().equals("歸檔")
+					|| state[0][0].trim().equals("結案")
+					|| state[0][0].trim().equals("END")) {
 
-				ret[i][signStateNo] = ret[i][signStateNo].trim()
+				ret[i][signStateNo] = state[0][0].trim().trim()
 						+ "<br><font color=blue>(已結案)</font>";
 			} else {
 				// 如果還沒結案 就需要取得簽核人員的資料並顯示.
@@ -506,7 +507,8 @@ public class _hproc extends hproc {
 						sb.append(")");
 					}
 				}
-				String state[][] =  getTalk().queryFromPool("select F_INP_STAT from "+tableName+"_FLOWC where PNO = '"+ret[i][0]+"'");
+				
+				
 				ret[i][signStateNo] = state[0][0].trim()
 						+ "<br><font color=red>(未結案)" + sb.toString()
 						+ "</font>";

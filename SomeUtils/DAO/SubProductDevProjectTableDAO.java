@@ -16,14 +16,13 @@ public class SubProductDevProjectTableDAO extends _hproc implements
 	talk t;
 
 	public SubProductDevProjectTableDAO(talk t) {
-		super();
 		this.t = t;
 	}
 
 	public void add(ArrayList<SubProductDevProjectTableBean> beanList)
 			throws SQLException, Exception {
 		// TODO Auto-generated method stub
-		ProductDevProjectTableDAO dao = new ProductDevProjectTableDAO(getTalk());
+		ProductDevProjectTableDAO dao = new ProductDevProjectTableDAO(t);
 		ProductDevProjectTableBean bean = null;
 		for (SubProductDevProjectTableBean b : beanList) {
 			t.execFromPool("INSERT INTO SUB_PRODUCT_DEV_PROJECT_TABLE (DEPT_FLAG,MSATER_PNO,SUB_PNO)"
@@ -45,7 +44,7 @@ public class SubProductDevProjectTableDAO extends _hproc implements
 	public void InsertFlowAndHis(talk t, String MSATER_PNO, String SUB_PNO,
 			String EMPID) throws SQLException, Exception {
 		String sql = "";
-		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		Date date = new Date();
 		String strDate = sdFormat.format(date);
 
