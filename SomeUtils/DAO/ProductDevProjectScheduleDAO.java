@@ -2,6 +2,8 @@ package SomeUtils.DAO;
 
 import java.sql.SQLException;
 
+import org.apache.commons.lang.StringUtils;
+
 import jcx.db.talk;
 import jcx.jform.hproc;
 import SomeUtils.Bean.ProductDevProjectScheduleBean;
@@ -91,7 +93,7 @@ public class ProductDevProjectScheduleDAO extends hproc implements
 	public void update(ProductDevProjectScheduleBean bean)
 			throws SQLException, Exception {
 		// TODO Auto-generated method stub
-		t.execFromPool("update "+tableString+" set "
+		String sql = "update "+tableString+" set "
 				+ " PROJECT_NO = '"
 				+ bean.getPROJECT_NO()
 				+ "'"
@@ -121,17 +123,23 @@ public class ProductDevProjectScheduleDAO extends hproc implements
 				+ "'"
 				+ ", CLOSING_DATE = '"
 				+ bean.getCLOSING_DATE()
-				+ "'"
-				+ ", REFERENCE_FILE_1 = '"
-				+ bean.getREFERENCE_FILE_1()
-				+ "'"
-				+ ", REFERENCE_FILE_2 = '"
-				+ bean.getREFERENCE_FILE_2()
-				+ "'"
-				+ ", REFERENCE_FILE_3 = '"
-				+ bean.getREFERENCE_FILE_3()
-				+ "'"
-				+ " where PNO = '" + bean.getPNO() + "'");
+				+ "' ";
+		
+		if (!StringUtils.isEmpty(bean.getREFERENCE_FILE_1())&& !bean.getREFERENCE_FILE_1().equals("null") ){
+			sql += ", REFERENCE_FILE_1 = '" + bean.getREFERENCE_FILE_1() + "'";
+			}
+		if (!StringUtils.isEmpty(bean.getREFERENCE_FILE_2())&& !bean.getREFERENCE_FILE_2().equals("null")){
+			sql += ", REFERENCE_FILE_2 = '" + bean.getREFERENCE_FILE_2() + "'";
+			}
+		if (!StringUtils.isEmpty(bean.getREFERENCE_FILE_3())&& !bean.getREFERENCE_FILE_3().equals("null")){
+			sql += ", REFERENCE_FILE_3 = '" + bean.getREFERENCE_FILE_3() + "'";
+			}
+		
+		
+	
+		sql += " where PNO = '" + bean.getPNO() + "'";
+		System.out.println("ProductDevProjectScheduleDAO update()--"+sql);
+		t.execFromPool(sql);
 		t.close();
 	}
 	

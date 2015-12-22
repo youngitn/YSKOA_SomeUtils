@@ -77,6 +77,39 @@ public class ProductDevProjectTableDAO extends hproc implements
 		t.close();
 		return pBean;
 	}
+	
+	public ProductDevProjectTableBean getProductDevProjectTableBeanByProjectNo(
+			String ProjectNo) throws SQLException, Exception {
+		// TODO Auto-generated method stub
+		ProductDevProjectTableBean pBean = null;
+
+		String[][] ret = t
+				.queryFromPool("select * from "+tablesString+" where PROJECT_NO = '"
+						+ ProjectNo + "'");
+
+		pBean = new ProductDevProjectTableBean(ret[0][0],// PNO
+				ret[0][1],// DATE
+				ret[0][2],// P_NAME
+				ret[0][3],// DESCRIPTION
+				ret[0][4],// EXP_DATE
+				ret[0][5],// GENERIC_CNAME
+				ret[0][6],// GENERIC_ENAME
+				ret[0][7],// DOSAGE_FORM
+				ret[0][8],// DOSE
+				ret[0][9],// PACKING
+				ret[0][10],// DEV_TYPE
+				ret[0][11],// MEDICINE_TYPE
+				ret[0][12],// SALES_ATTACHED
+				ret[0][13],// LAW_ATTACHED
+				ret[0][14],// PURCH_ATTACHED
+				ret[0][15],// PROCESS_ATTACHED
+				ret[0][16],// RD_ATTACHED
+				ret[0][17],// IS_APPROVE
+				ret[0][18],// PROJECT_NO
+				ret[0][19]);// REW_EMPID
+		t.close();
+		return pBean;
+	}
 
 	@Override
 	public String action(String arg0) throws Throwable {

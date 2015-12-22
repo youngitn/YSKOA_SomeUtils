@@ -21,7 +21,7 @@ public class ProductDevProjectScheduleBean implements Serializable {
 	private String CLOSING_DATE;
 	private String REFERENCE_FILE_1;
 	private String REFERENCE_FILE_2;
-	private String EFERENCE_FILE_3;
+	private String REFERENCE_FILE_3;
 
 	public ProductDevProjectScheduleBean(String pNO,
 			String pROJECT_NO, String eXP_MATERIAL_ATTENDANCE_DATE,
@@ -30,7 +30,7 @@ public class ProductDevProjectScheduleBean implements Serializable {
 			String eXP_STABILITY_SAMPLES_PLACED_DATE,
 			String eXP_REPORTING_DATE, String pROJECT_STATUS,
 			String cLOSING_DATE, String rEFERENCE_FILE_1,
-			String rEFERENCE_FILE_2, String eFERENCE_FILE_3) {
+			String rEFERENCE_FILE_2, String rEFERENCE_FILE_3) {
 		super();
 		PNO = pNO;
 		PROJECT_NO = pROJECT_NO;
@@ -45,7 +45,7 @@ public class ProductDevProjectScheduleBean implements Serializable {
 		CLOSING_DATE = cLOSING_DATE;
 		REFERENCE_FILE_1 = rEFERENCE_FILE_1;
 		REFERENCE_FILE_2 = rEFERENCE_FILE_2;
-		EFERENCE_FILE_3 = eFERENCE_FILE_3;
+		REFERENCE_FILE_3 = rEFERENCE_FILE_3;
 	}
 
 	public String getPROJECT_NO() {
@@ -147,11 +147,11 @@ public class ProductDevProjectScheduleBean implements Serializable {
 	}
 
 	public String getREFERENCE_FILE_3() {
-		return EFERENCE_FILE_3;
+		return REFERENCE_FILE_3;
 	}
 
-	public void setEFERENCE_FILE_3(String eFERENCE_FILE_3) {
-		EFERENCE_FILE_3 = eFERENCE_FILE_3;
+	public void setREFERENCE_FILE_3(String eFERENCE_FILE_3) {
+		REFERENCE_FILE_3 = eFERENCE_FILE_3;
 	}
 
 	public String getPNO() {
