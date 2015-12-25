@@ -2,6 +2,8 @@ package SomeUtils.DAO;
 
 import java.sql.SQLException;
 
+import org.apache.commons.lang.StringUtils;
+
 import jcx.db.talk;
 import jcx.jform.hproc;
 import SomeUtils.Bean.ProductDevProjectTableBean;
@@ -20,7 +22,7 @@ public class ProductDevProjectTableDAO extends hproc implements
 	public void update(ProductDevProjectTableBean bean)
 			throws SQLException, Exception {
 		// TODO Auto-generated method stub
-		t.execFromPool("update "+tablesString+" set "
+		String sql = "update "+tablesString+" set "
 				+ " DATE = '" + bean.getDATE() + "'" 
 				+ ", P_NAME = '"+ bean.getP_NAME() + "'" 
 				+ ", DESCRIPTION = '" + bean.getDESCRIPTION() + "'" 
@@ -32,15 +34,28 @@ public class ProductDevProjectTableDAO extends hproc implements
 				+ ", PACKING = '" + bean.getPACKING() + "'" 
 				+ ", DEV_TYPE = '" + bean.getDEV_TYPE() + "'" 
 				+ ", MEDICINE_TYPE = '" + bean.getMEDICINE_TYPE() + "'" 
-				+ ", SALES_ATTACHED = '" + bean.getSALES_ATTACHED() + "'" 
-				+ ", LAW_ATTACHED = '" + bean.getLAW_ATTACHED() + "'" 
-				+ ", PURCH_ATTACHED = '" + bean.getPURCH_ATTACHED() + "'" 
-				+ ", PROCESS_ATTACHED = '" + bean.getPROCESS_ATTACHED() + "'" 
-				+ ", RD_ATTACHED = '" + bean.getRD_ATTACHED() + "'" 
 				+ ", IS_APPROVE = '" + bean.getIS_APPROVE() + "'" 
-				+ ", PROJECT_NO = '" + bean.getPROJECT_NO() + "'" 			
-				+ " where PNO = '" + bean.getPNO() + "'"
-		);
+				+ ", PROJECT_NO = '" + bean.getPROJECT_NO() + "'"; 			
+				
+		
+		if (!StringUtils.isEmpty(bean.getSALES_ATTACHED())&& !bean.getSALES_ATTACHED().equals("null") ){
+			sql += ", SALES_ATTACHED = '" + bean.getSALES_ATTACHED() + "'";
+			}
+		if (!StringUtils.isEmpty(bean.getLAW_ATTACHED())&& !bean.getLAW_ATTACHED().equals("null")){
+			sql += ", LAW_ATTACHED = '" + bean.getLAW_ATTACHED() + "'";
+			}
+		if (!StringUtils.isEmpty(bean.getPURCH_ATTACHED())&& !bean.getPURCH_ATTACHED().equals("null")){
+			sql += ", PURCH_ATTACHED = '" + bean.getPURCH_ATTACHED() + "'";
+			}
+		if (!StringUtils.isEmpty(bean.getPROCESS_ATTACHED())&& !bean.getPROCESS_ATTACHED().equals("null")){
+			sql += ", PROCESS_ATTACHED = '" + bean.getPROCESS_ATTACHED() + "'";
+			}
+		if (!StringUtils.isEmpty(bean.getRD_ATTACHED())&& !bean.getRD_ATTACHED().equals("null")){
+			sql += ", RD_ATTACHED = '" + bean.getRD_ATTACHED() + "'";
+			}
+		
+		sql += " where PNO = '" + bean.getPNO() + "'";
+		t.execFromPool(sql);
 		t.close();
 	}
 
