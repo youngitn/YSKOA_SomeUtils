@@ -615,7 +615,143 @@ public class _hproc extends hproc {
 		}
 
 	}
+	/**
+	 * 帶簽核狀態的查詢 FOR UUID.
+	 * @param list
+	 * @param tableName
+	 * @param signFunctionName
+	 * @param empNameNo
+	 * @param signStateNo
+	 * @param otherCondition
+	 * @return
+	 * @throws SQLException
+	 * @throws Exception
+	 */
+	public boolean setQueryTableForUUID(ArrayList<QueryItem> list, String tableName,
+			String signFunctionName, int empNameNo, int signStateNo,
+			String otherCondition) throws SQLException, Exception {
 
+		String selectField = "";
+		String tableHeaders = "";
+		String c = ",";
+		String conditionSqlString = "";
+		String AND = " and ";
+		ArrayList<String> condition = new ArrayList<String>();
+		for (QueryItem q : list) {
+			if (list.indexOf(q) == list.size() - 1) {
+				c = "";
+			}
+			selectField += q.getFieldName() + c;
+			tableHeaders += q.getChineseName() + c;
+			// process search type
+
+			switch (q.getSearchType()) {
+			case 1:
+				if (!StringUtils.isEmpty(getValue("QUERY_" + q.getFieldName()))) {
+					condition.add(q.getFieldName() + "= '"
+							+ getValue("QUERY_" + q.getFieldName()) + "'");
+				}
+
+				break;
+			case 2:
+
+				if (!checkQueryForDateFieldStartAndEnd(q.getFieldName())) {
+					message("請輸入完整的日期區間以供查詢!");
+					return true;
+				}
+				if (!StringUtils.isEmpty(getValue("QUERY_" + q.getFieldName()
+						+ "_S"))) {
+					condition.add(q.getFieldName() + " between '"
+							+ getValue("QUERY_" + q.getFieldName() + "_S")
+							+ "' and '"
+							+ getValue("QUERY_" + q.getFieldName() + "_E")
+							+ "'");
+				}
+
+				break;
+			case 0:
+
+				break;
+
+			default:
+				break;
+			}
+
+		}
+
+		if (condition.size() > 0) {
+			conditionSqlString = AND;
+			for (String s : condition) {
+				if (condition.indexOf(s) == condition.size() - 1) {
+					AND = "";
+				}
+				conditionSqlString += s + AND;
+			}
+		}
+		String[] HeaderArray = tableHeaders.split(",");
+
+		if (otherCondition.equals("") && !conditionSqlString.equals("")) {
+			otherCondition = "where 1 = 1 ";
+		}
+
+		String sqlString = "SELECT " + selectField + " FROM " + tableName
+				+ " a " + otherCondition + conditionSqlString;
+
+		String[][] ret = getTalk().queryFromPool(sqlString);
+
+		for (int i = 0; i < ret.length; i++) {
+			// set EMP name in table data.
+			UserInfoViewBean user = getUserInfo(ret[i][empNameNo]);
+			ret[i][empNameNo] = ret[i][empNameNo] + "-" + user.getHecname();
+
+			// set SIGN state and who will sign in table data.==>
+			// the if-statement like below...may be more.
+			String state[][] =  getTalk().queryFromPool("select F_INP_STAT from "+tableName+"_FLOWC where UUID = '"+ret[i][0]+"'");
+			if (state[0][0].trim().equals("歸檔")
+					|| state[0][0].trim().equals("結案")
+					|| state[0][0].trim().equals("END")) {
+
+				ret[i][signStateNo] = state[0][0].trim().trim()
+						+ "<br><font color=blue>(已結案)</font>";
+			} else {
+				// 如果還沒結案 就需要取得簽核人員的資料並顯示.
+				Vector<?> people = getApprovablePeople(signFunctionName,
+						"a.PNO='" + ret[i][0] + "'");
+
+				StringBuffer sb = new StringBuffer();
+				if (people != null) {
+					if (people.size() != 0) {
+						sb.append("(");
+						for (int j = 0; j < people.size(); j++) {
+							if (j != 0)
+								sb.append(",");
+							String id1 = (String) people.elementAt(j);
+							String name1 = getName(id1);
+							sb.append(name1 + ":" + id1);
+						}
+						sb.append(")");
+					}
+				}
+				
+				
+				ret[i][signStateNo] = state[0][0].trim()
+						+ "<br><font color=red>(未結案)" + sb.toString()
+						+ "</font>";
+			}
+			// set SIGN state and who will sign in table data.==<
+		}
+
+		getTalk().close();
+		if (ret.length <= 0) {
+			message("查無資料!");
+
+		}
+		setTableData("QUERY_LIST", ret);
+		setTableHeader("QUERY_LIST", HeaderArray);
+		//message(sqlString);//debug
+		return true;
+
+	}
 	@Override
 	public String action(String paramString) throws Throwable {
 		// TODO Auto-generated method stub
